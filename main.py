@@ -27,18 +27,18 @@ from io import BytesIO
 import numpy as np
 import cv2
 
-def convertto_watercolorsketch(inp_img):
+def convertto_watercolorsketch(inp_img, sigma_s, sigma_r):
     if inp_img is not None:
-        img_1 = cv2.edgePreservingFilter(inp_img, flags = 2, sigma_s = 100, sigma_r = 0.1)
-        img_water_color = cv2.stylization(img_1, sigma_s = 150, sigma_r = 0.2)
+        img_1 = cv2.edgePreservingFilter(inp_img, flags=2, sigma_s=sigma_s, sigma_r=sigma_r)
+        img_water_color = cv2.stylization(img_1, sigma_s=sigma_s * 2, sigma_r=sigma_r * 2)
         return img_water_color
     else:
         return None
 
 def pencilsketch(inp_img):
     img_pencil_sketch, pencil_color_sketch = cv2.pencilSketch(
-        inp_img, sigma_s = 50, sigma_r = 0.05, shade_factor = 0.065)
-    return (img_pencil_sketch)
+        inp_img, sigma_s=50, sigma_r=0.05, shade_factor=0.065)
+    return img_pencil_sketch
 
 def apply_noise_reduction(image):
     return cv2.medianBlur(image, 9)
@@ -56,6 +56,8 @@ def main():
     image_file = st.file_uploader("Upload Images", type=["png", "jpg", "jpeg"])
 
     if image_file is not None:
+        sigma_s = st.slider("Sigma_s (Scale Spatial)", 1, 200, 50)
+        sigma_r = st.slider("Sigma_r (Scale Range)", 0.01, 1.0, 0.3)
 
         option = st.selectbox('How would you like to convert the image',
                               ('Convert to water color photos',
@@ -63,7 +65,7 @@ def main():
                                'Apply noise'))
         if option == 'Convert to water color photos':
             image = Image.open(image_file)
-            final_sketch = convertto_watercolorsketch(np.array(image))
+            final_sketch = convertto_watercolorsketch(np.array(image), sigma_s, sigma_r)
             im_pil = Image.fromarray(final_sketch)
 
             col1, col2 = st.columns(2)
@@ -105,7 +107,7 @@ def main():
                 st.download_button(
                     label="Download image",
                     data=byte_im,
-                    file_name="watercolorsketch.png",
+                    file_name="pencilsketch.png",
                     mime="image/png"
                 )
         if option == 'Apply noise':
@@ -132,7 +134,6 @@ def main():
                     file_name="noise.png",
                     mime="image/png"
                 )
-
 
 if __name__ == '__main__':
     main()
