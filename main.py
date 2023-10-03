@@ -78,12 +78,32 @@ def main():
                 st.subheader("Drawing Water Color")
                 st.image(im_pil, width=300)
 
+                buf = BytesIO()
+                im_pil.save(buf, format="PNG")
+                byte_im = buf.getvalue()
+                st.download_button(
+                    label="Download Water Color Image",
+                    data=byte_im,
+                    file_name="watercolor.png",
+                    mime="image/png"
+                )
+
             if option == 'Drawing Pencil':
                 image = Image.open(image_file)
                 final_sketch = pencilsketch(np.array(image))
                 im_pil = Image.fromarray(final_sketch)
                 st.subheader("Drawing Pencil")
                 st.image(im_pil, width=300)
+
+                buf = BytesIO()
+                im_pil.save(buf, format="PNG")
+                byte_im = buf.getvalue()
+                st.download_button(
+                    label="Download Water Color Image",
+                    data=byte_im,
+                    file_name="pencil.png",
+                    mime="image/png"
+                )
 
             if option == 'Apply Noise':
                 image = Image.open(image_file)
@@ -92,6 +112,16 @@ def main():
                 im_pil = Image.fromarray(img_array)
                 st.subheader("Image with Applied Noise")
                 st.image(im_pil, width=300)
+
+                buf = BytesIO()
+                im_pil.save(buf, format="PNG")
+                byte_im = buf.getvalue()
+                st.download_button(
+                    label="Download Water Color Image",
+                    data=byte_im,
+                    file_name="noise.png",
+                    mime="image/png"
+                )
 
     if option == 'Free Drawing':
         st.subheader("Free Drawing")
@@ -111,6 +141,7 @@ def main():
                 height=300,
                 drawing_mode="freedraw",
                 key="canvas", )
+
         elif drawing_mode == 'Line':
             canvas_result = st_canvas(
                 fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
