@@ -22,7 +22,7 @@
 
 
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageDraw
 from io import BytesIO
 import numpy as np
 import cv2
@@ -98,15 +98,37 @@ def main():
 
         color = st.color_picker("Choose color", "#000000")
 
-        canvas_result = st_canvas(
-            fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
-            stroke_width=10,
-            stroke_color=color,
-            background_color="#eee",
-            height=300,
-            drawing_mode="freedraw",
-            key="canvas", )
+        drawing_mode = st.radio(
+            "Choose drawing tool",
+            ('Free Draw', 'Line', 'Rectangle'))
 
+        if drawing_mode == 'Free Draw':
+            canvas_result = st_canvas(
+                fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
+                stroke_width=10,
+                stroke_color=color,
+                background_color="#eee",
+                height=300,
+                drawing_mode="freedraw",
+                key="canvas", )
+        elif drawing_mode == 'Line':
+            canvas_result = st_canvas(
+                fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
+                stroke_width=10,
+                stroke_color=color,
+                background_color="#eee",
+                height=300,
+                drawing_mode="line",
+                key="canvas", )
+        elif drawing_mode == 'Rectangle':
+            canvas_result = st_canvas(
+                fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
+                stroke_width=10,
+                stroke_color=color,
+                background_color="#eee",
+                height=300,
+                drawing_mode="rect",
+                key="canvas", )
 
 if __name__ == '__main__':
     main()
