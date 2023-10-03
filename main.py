@@ -95,14 +95,18 @@ def main():
 
     if option == 'Free Drawing':
         st.subheader("Free Drawing")
+
+        color = st.color_picker("Choose color", "#000000")
+
         canvas_result = st_canvas(
-            fill_color="rgba(255, 255, 255, 0.3)",
+            fill_color=f"rgba({int(color[1:3], 16)}, {int(color[3:5], 16)}, {int(color[5:7], 16)}, 0.3)",
             stroke_width=10,
-            stroke_color="rgb(0, 0, 0)",
+            stroke_color=color,
             background_color="#eee",
             height=300,
             drawing_mode="freedraw",
-            key="canvas",)
+            key="canvas", )
+
 
 if __name__ == '__main__':
     main()
