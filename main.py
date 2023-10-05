@@ -37,6 +37,26 @@ def convertto_watercolorsketch(inp_img, sigma_s, sigma_r):
     else:
         return None
 
+
+def simulate_drawing(image, sigma_s, sigma_r, num_steps):
+    images_per_row = 5
+    num_rows = (num_steps - 1) // images_per_row + 1
+
+    drawing_image = image.copy()
+
+    for row in range(num_rows):
+        columns = st.columns(images_per_row)
+        for i in range(images_per_row):
+            step = num_steps - (row * images_per_row + i)
+            if step >= 1:
+                with columns[i]:
+                    st.image(drawing_image, width=120, caption=f"Step {step}")
+                    if step > 1:
+                        drawing_image = convertto_watercolorsketch(
+                            np.array(drawing_image), sigma_s, sigma_r
+                        )
+                        drawing_image = Image.fromarray(drawing_image)
+
 def pencilsketch(inp_img):
     img_pencil_sketch, pencil_color_sketch = cv2.pencilSketch(
         inp_img, sigma_s=50, sigma_r=0.05, shade_factor=0.065)
@@ -67,19 +87,22 @@ def main():
         if image_file is not None:
             sigma_s = st.slider("Sigma_s (Scale Spatial)", 1, 200, 50)
             sigma_r = st.slider("Sigma_r (Scale Range)", 0.01, 1.0, 0.3)
+            num_steps = st.slider("Number of Steps", 1, 20, 5)
 
             st.subheader("Image")
-            st.image(load_an_image(image_file), width=300)
+            st.image(load_an_image(image_file), width=500)
 
             if option == 'Drawing Water Color':
                 image = Image.open(image_file)
-                final_sketch = convertto_watercolorsketch(np.array(image), sigma_s, sigma_r)
-                im_pil = Image.fromarray(final_sketch)
-                st.subheader("Drawing Water Color")
-                st.image(im_pil, width=300)
+                # final_sketch = convertto_watercolorsketch(np.array(image), sigma_s, sigma_r)
+                # im_pil = Image.fromarray(final_sketch)
+                # st.subheader("Drawing Water Color")
+                # st.image(im_pil, width=500)
+
+                simulate_drawing(image, sigma_s, sigma_r, num_steps)
 
                 buf = BytesIO()
-                im_pil.save(buf, format="PNG")
+                image.save(buf, format="PNG")
                 byte_im = buf.getvalue()
                 st.download_button(
                     label="Download Water Color Image",
@@ -93,13 +116,13 @@ def main():
                 final_sketch = pencilsketch(np.array(image))
                 im_pil = Image.fromarray(final_sketch)
                 st.subheader("Drawing Pencil")
-                st.image(im_pil, width=300)
+                st.image(im_pil, width=500)
 
                 buf = BytesIO()
                 im_pil.save(buf, format="PNG")
                 byte_im = buf.getvalue()
                 st.download_button(
-                    label="Download Water Color Image",
+                    label="Download Image",
                     data=byte_im,
                     file_name="pencil.png",
                     mime="image/png"
@@ -111,13 +134,13 @@ def main():
                 img_array = apply_noise_reduction(img_array)
                 im_pil = Image.fromarray(img_array)
                 st.subheader("Image with Applied Noise")
-                st.image(im_pil, width=300)
+                st.image(im_pil, width=500)
 
                 buf = BytesIO()
                 im_pil.save(buf, format="PNG")
                 byte_im = buf.getvalue()
                 st.download_button(
-                    label="Download Water Color Image",
+                    label="Download Image",
                     data=byte_im,
                     file_name="noise.png",
                     mime="image/png"
@@ -138,7 +161,7 @@ def main():
                 stroke_width=10,
                 stroke_color=color,
                 background_color="#eee",
-                height=300,
+                height=500,
                 drawing_mode="freedraw",
                 key="canvas", )
 
@@ -148,7 +171,7 @@ def main():
                 stroke_width=10,
                 stroke_color=color,
                 background_color="#eee",
-                height=300,
+                height=500,
                 drawing_mode="line",
                 key="canvas", )
         elif drawing_mode == 'Rectangle':
@@ -157,7 +180,7 @@ def main():
                 stroke_width=10,
                 stroke_color=color,
                 background_color="#eee",
-                height=300,
+                height=500,
                 drawing_mode="rect",
                 key="canvas", )
 
