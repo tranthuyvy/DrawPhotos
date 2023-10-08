@@ -37,12 +37,21 @@ def convertto_watercolorsketch(inp_img, sigma_s, sigma_r):
     else:
         return None
 
+def numpy_to_pil_image(numpy_image):
+    return Image.fromarray(numpy_image)
+
+import io
 
 def simulate_drawing(image, sigma_s, sigma_r, num_steps):
     images_per_row = 5
     num_rows = (num_steps - 1) // images_per_row + 1
 
-    drawing_image = image.copy()
+    # Create a column to display the final result image
+    final_result_column = st.columns(1)
+    with final_result_column[0]:
+        st.image(image, width=500, caption="Final Result")
+
+    drawing_image = np.array(image)
 
     for row in range(num_rows):
         columns = st.columns(images_per_row)
@@ -50,12 +59,14 @@ def simulate_drawing(image, sigma_s, sigma_r, num_steps):
             step = num_steps - (row * images_per_row + i)
             if step >= 1:
                 with columns[i]:
-                    st.image(drawing_image, width=120, caption=f"Step {step}")
                     if step > 1:
                         drawing_image = convertto_watercolorsketch(
-                            np.array(drawing_image), sigma_s, sigma_r
+                            drawing_image, sigma_s, sigma_r
                         )
-                        drawing_image = Image.fromarray(drawing_image)
+                    st.image(drawing_image, width=125, caption=f"Step {step}")
+
+
+
 
 def pencilsketch(inp_img):
     img_pencil_sketch, pencil_color_sketch = cv2.pencilSketch(
@@ -89,23 +100,21 @@ def main():
             sigma_r = st.slider("Sigma_r (Scale Range)", 0.01, 1.0, 0.3)
             num_steps = st.slider("Number of Steps", 1, 20, 5)
 
+            input_image = load_an_image(image_file)
             st.subheader("Image")
+
             st.image(load_an_image(image_file), width=500)
 
             if option == 'Drawing Water Color':
-                image = Image.open(image_file)
-                # final_sketch = convertto_watercolorsketch(np.array(image), sigma_s, sigma_r)
-                # im_pil = Image.fromarray(final_sketch)
-                # st.subheader("Drawing Water Color")
-                # st.image(im_pil, width=500)
-
-                simulate_drawing(image, sigma_s, sigma_r, num_steps)
+                result_image = convertto_watercolorsketch(np.array(input_image), sigma_s, sigma_r)
+                simulate_drawing(result_image, sigma_s, sigma_r, num_steps)
 
                 buf = BytesIO()
-                image.save(buf, format="PNG")
+                final_pil_image = numpy_to_pil_image(result_image)
+                final_pil_image.save(buf, format="PNG")
                 byte_im = buf.getvalue()
                 st.download_button(
-                    label="Download Water Color Image",
+                    label="Download Image",
                     data=byte_im,
                     file_name="watercolor.png",
                     mime="image/png"
