@@ -28,5 +28,4 @@
 - streamlit_drawable_canvas: A custom library for Streamlit to create a drawable canvas.
 
 # Run
-  streamlit run <Location containing the main.py file>
-[website]: 
+  streamlit run (Location containing the main.py file)
