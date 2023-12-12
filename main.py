@@ -5,7 +5,6 @@ import numpy as np
 import cv2
 from streamlit_drawable_canvas import st_canvas
 
-
 # def convertto_watercolorsketch(inp_img, sigma_s, sigma_r):
 #     if inp_img is not None:
 #         img_1 = cv2.edgePreservingFilter(inp_img, flags=2, sigma_s=sigma_s, sigma_r=sigma_r)
@@ -102,7 +101,10 @@ def load_an_image(image_path):
     return img
 
 def main():
-
+    st.set_page_config(
+        page_title="TTV | Drawing From Photo",
+        page_icon="favicon.ico",
+    )
     st.title('Drawing From Photos')
     st.write("This is an application developed for applying drawing.")
     st.subheader("Choose an option")
