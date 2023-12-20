@@ -6,8 +6,6 @@ import cv2
 from streamlit_drawable_canvas import st_canvas
 from rembg import remove
 
-with open('style.css') as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 def numpy_to_pil_image(numpy_image):
     return Image.fromarray(numpy_image)
 
@@ -282,21 +280,6 @@ def main():
                     processed_image = process_image(input_image)
                     st.subheader("Processed Image")
                     st.image(processed_image, width=500)
-
-            if option == 'Oil Paint':
-                image = Image.open(image_file)
-                final_sketch = oilPaint(np.array(image))
-                im_pil = numpy_to_pil_image(final_sketch)
-
-                buf = BytesIO()
-                im_pil.save(buf, format="PNG")
-                byte_im = buf.getvalue()
-                st.download_button(
-                    label="Download Image",
-                    data=byte_im,
-                    file_name="oilPaint.png",
-                    mime="image/png"
-                )
 
             if option == 'Edit Image':
 
