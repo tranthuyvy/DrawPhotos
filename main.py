@@ -194,6 +194,10 @@ def image_editor(image, editor_option):
 #     return res
 
 def main():
+    st.set_page_config(
+        page_title="TTV | Drawing From Photo",
+        page_icon="favicon.ico",
+    )
 
     st.title('Drawing From Photos')
     st.write("This is an application developed for applying drawing.")
